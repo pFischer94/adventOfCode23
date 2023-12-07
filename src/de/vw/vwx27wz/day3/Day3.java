@@ -16,14 +16,15 @@ public class Day3 {
 
             while (line != null) {
                 rolling3Lines.add(line);
-//                sum += r3L.getSumOfPartNumbersOfMiddleLine();
+//                sum += rolling3Lines.getSumOfPartNumbersOfMiddleLine();
                 sum += rolling3Lines.getSumOfGearsOfMiddleLine();
                 System.out.println(line + " -> " + sum);
                 line = br.readLine();
             }
 
             rolling3Lines.add("");
-//            sum += r3L.getSumOfPartNumbersOfMiddleLine();
+//            sum += rolling3Lines.getSumOfPartNumbersOfMiddleLine();
+            sum += rolling3Lines.getSumOfGearsOfMiddleLine();
 
         } catch (IOException e) {
             e.printStackTrace();
