@@ -37,6 +37,7 @@ public class Day2 {
         return redMax * greenMax * blueMax;
     }
 
+    @SuppressWarnings("unused")
     private int getIdFromGameIfPossible(String line) {
         String[] splitted = line.split(":");
         String game = splitted[0];
