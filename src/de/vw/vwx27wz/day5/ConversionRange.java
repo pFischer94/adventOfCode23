@@ -12,10 +12,6 @@ public class ConversionRange extends Range {
         this.addend = addend;
     }
 
-    public long getAddend() {
-        return this.addend;
-    }
-
     public static List<List<ConversionRange>> readConversionTablesFromLines(List<String> lines) {
         List<List<ConversionRange>> allConversionRanges = new ArrayList<>();
         List<ConversionRange> conversionRangesOfOneMap = new ArrayList<>();
@@ -55,21 +51,6 @@ public class ConversionRange extends Range {
         return new ConversionRange(start, end, addend);
     }
 
-    public static void printConversionRanges(List<List<ConversionRange>> ranges) {
-        for (List<ConversionRange> conversionRanges : ranges) {
-            for (ConversionRange convRange : conversionRanges) {
-                System.out.println(convRange);
-            }
-            System.out.println();
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "ConversionRange [ start=%,15d, end=%,15d, addend=%,15d ]".formatted(this.getStart(), this.getEnd(),
-                this.addend);
-    }
-
     public SeedRange convert(SeedRange sourceRange) {
         long start = Math.max(this.getStart(), sourceRange.getStart()) + this.addend;
         long end = Math.min(this.getEnd(), sourceRange.getEnd()) + this.addend;
@@ -80,6 +61,12 @@ public class ConversionRange extends Range {
         long start = Math.max(this.getStart(), sourceRange.getStart());
         long end = Math.min(this.getEnd(), sourceRange.getEnd());
         return new SeedRange(start, end);
+    }
+
+    @Override
+    public String toString() {
+        return "ConversionRange [ start=%,15d, end=%,15d, addend=%,15d ]".formatted(this.getStart(), this.getEnd(),
+                this.addend);
     }
 
 }

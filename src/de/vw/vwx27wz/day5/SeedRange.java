@@ -8,10 +8,6 @@ public class SeedRange extends Range {
     // TODO // auskommentiertes entfernen
     public SeedRange(long start, long end) {
         super(start, end);
-//        if (start == 0) {
-//            new RuntimeException("0").printStackTrace();
-//            System.out.println();
-//        }
     }
 
     public static List<SeedRange> readSeedRangesFromLine(String line) {
@@ -51,36 +47,6 @@ public class SeedRange extends Range {
             destinationRanges.addAll(remainder);
         }
 
-//        int sourceIndex = 0;
-//        boolean sourceAlreadyConverted = false;
-//        int conversionIndex = 0;
-//
-//        while (sourceIndex < sourceRanges.size()) {
-//            SeedRange sourceRange = sourceRanges.get(sourceIndex);
-//            ConversionRange conversionRange = conversionRanges.get(conversionIndex);
-//
-////            printStuff(sourceRanges, conversionRanges, sourceIndex, conversionIndex, sourceRange, conversionRange);
-//
-//            if (sourceRange.overlaps(conversionRange)) {
-//                // TODO Fehlersuche convert()
-//                List<SeedRange> convertedRanges = sourceRange.convert(conversionRange);
-//                destinationRanges.addAll(convertedRanges);
-//                if (conversionRange.getEnd() >= sourceRange.getEnd()) {
-//                    sourceIndex++;
-//                } else {
-//                    conversionIndex++;
-//                }
-//            } else {
-//                // TODO test isBefore
-//                if (conversionRange.isBefore(sourceRange)) {
-//                    conversionIndex++;
-//                } else {
-//                    destinationRanges.add(sourceRange);
-//                    sourceIndex++;
-//                }
-//            }
-//        }
-
         destinationRanges.sort((a, b) -> a.compareTo(b));
         destinationRanges = Range.mergeOverlappingRangesIn(destinationRanges);
         if (!Range.isListOfRangesValid(destinationRanges)) {
@@ -92,7 +58,7 @@ public class SeedRange extends Range {
     // TODO validieren und sort converted
     private List<SeedRange> deduct(List<SeedRange> convertedParts) {
         if (convertedParts.size() == 0) {
-            return List.of(new SeedRange(this.getStart(), this.getEnd()));
+            return List.of(this);
         }
 
         List<SeedRange> remainder = new ArrayList<>();
@@ -118,76 +84,17 @@ public class SeedRange extends Range {
         return remainder;
     }
 
-    private static void printStuff(List<SeedRange> sourceRanges, List<ConversionRange> conversionRanges, int sourceIndex, int conversionIndex, SeedRange sourceRange, ConversionRange conversionRange) {
-        System.out.printf("sourceIndex     = %3d  < %3d  =     sourceRanges.size() %n", sourceIndex,
-                sourceRanges.size());
-        System.out.printf("conversionIndex = %3d  < %3d  = conversionRanges.size() %n",
-                conversionIndex, conversionRanges.size());
-        if (sourceIndex >= sourceRanges.size()) {
-            throw new RuntimeException("sourceIndex %d is out of bounds for sourceRanges.size() %d %n"
-                    .formatted(sourceIndex, sourceRanges.size()));
-        }
-        if (conversionIndex >= conversionRanges.size()) {
-            throw new RuntimeException("conversionIndex %d is out of bounds for conversionRanges.size() %d %n"
-                    .formatted(conversionIndex, conversionRanges.size()));
-        }
-
-        System.out.println("      " + sourceRange);
-        System.out.println(conversionRange);
-        System.out.println("overlaps:        " + sourceRange.overlaps(conversionRange));
-        System.out.println("conv before src: " + conversionRange.isBefore(conversionRange));
-        System.out.println();
-
-        if (conversionRange.getStart() == 0) {
-            new RuntimeException("convert from 0").printStackTrace();
-            System.out.println();
-        }
-    }
-
-    private List<SeedRange> convert(ConversionRange conversionRange) {
-        List<SeedRange> convertedRanges = new ArrayList<>();
-
-        if (this.surrounds(conversionRange)) {
-            convertedRanges.add(new SeedRange(this.getStart(), conversionRange.getStart() - 1));
-            convertedRanges.add(new SeedRange(
-                    conversionRange.getStart() + conversionRange.getAddend(),
-                    conversionRange.getEnd() + conversionRange.getAddend()));
-            convertedRanges.add(new SeedRange(conversionRange.getEnd() + 1, this.getEnd()));
-        } else if (this.isSubSetOf(conversionRange)) {
-            convertedRanges.add(new SeedRange(
-                    this.getStart() + conversionRange.getAddend(),
-                    this.getEnd() + conversionRange.getAddend()));
-        } else if (this.getStart() < conversionRange.getStart()) {
-            convertedRanges.add(new SeedRange(this.getStart(), conversionRange.getStart() - 1));
-            convertedRanges.add(new SeedRange(
-                    conversionRange.getStart() + conversionRange.getAddend(),
-                    this.getEnd() + conversionRange.getAddend()));
-        } else if (this.getEnd() > conversionRange.getEnd()) {
-            convertedRanges.add(new SeedRange(
-                    this.getStart() + conversionRange.getAddend(),
-                    conversionRange.getEnd() + conversionRange.getAddend()));
-            convertedRanges.add(new SeedRange(conversionRange.getEnd() + 1, this.getEnd()));
-        }
-
-        convertedRanges.sort((a, b) -> a.compareTo(b));
-        convertedRanges = Range.mergeOverlappingRangesIn(convertedRanges);
-        if (!Range.isListOfRangesValid(convertedRanges)) {
-            throw new RuntimeException("convertedRanges is an invalid List of SeedRanges");
-        }
-        return convertedRanges;
-    }
-
-    public SeedRange merge(SeedRange... seedRanges) {
-        if (seedRanges.length == 0) {
-            throw new RuntimeException("seedRanges is empty");
+    public SeedRange merge(Range... ranges) {
+        if (ranges.length == 0) {
+            return this;
         }
 
         long min = this.getStart();
         long max = this.getEnd();
 
-        for (int index = 0; index < seedRanges.length; index++) {
-            min = Math.min(min, seedRanges[index].getStart());
-            max = Math.max(max, seedRanges[index].getEnd());
+        for (int index = 0; index < ranges.length; index++) {
+            min = Math.min(min, ranges[index].getStart());
+            max = Math.max(max, ranges[index].getEnd());
         }
 
         return new SeedRange(min, max);
