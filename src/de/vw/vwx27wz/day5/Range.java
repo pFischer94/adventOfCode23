@@ -28,7 +28,6 @@ public abstract class Range {
         return !(this.isBefore(other) || other.isBefore(this));
     }
 
-    // TODO research validate
     // TODO mergeAdjacent
     public static List<SeedRange> mergeOverlappingRangesIn(List<SeedRange> sortedRanges) {
         List<SeedRange> mergedRanges = new ArrayList<>();
@@ -65,7 +64,6 @@ public abstract class Range {
         mergedRanges.add(mergedRange);
     }
 
-    // TODO "System." entfernen, hier und überall
     public static <T extends Range> boolean isListOfRangesValid(List<T> ranges) {
         if (!ranges.get(0).isValid()) {
             return false;
@@ -98,7 +96,12 @@ public abstract class Range {
         if (this.start > o.start) {
             return 1;
         }
-        // TODO wenn läuft: nach Enden unterscheiden?
+        if (this.end < o.end) {
+            return -1;
+        }
+        if (this.end > o.end) {
+            return 1;
+        }
         return 0;
     }
 

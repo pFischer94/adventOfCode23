@@ -5,7 +5,6 @@ import java.util.List;
 
 public class SeedRange extends Range {
 
-    // TODO // auskommentiertes entfernen
     public SeedRange(long start, long end) {
         super(start, end);
     }
@@ -28,7 +27,9 @@ public class SeedRange extends Range {
     }
 
     public static List<SeedRange> convert(List<SeedRange> sourceRanges, List<ConversionRange> conversionRanges) {
-        // TODO listen validieren
+        if (!Range.isListOfRangesValid(sourceRanges) || !Range.isListOfRangesValid(conversionRanges)) {
+            throw new IllegalArgumentException("at least one of the passed lists of ranges is invalid");
+        }
 
         List<SeedRange> destinationRanges = new ArrayList<>();
 
@@ -55,11 +56,12 @@ public class SeedRange extends Range {
         return destinationRanges;
     }
 
-    // TODO validieren und sort converted
     private List<SeedRange> deduct(List<SeedRange> convertedParts) {
         if (convertedParts.size() == 0) {
             return List.of(this);
         }
+        convertedParts.sort((a, b) -> a.compareTo(b));
+        Range.isListOfRangesValid(convertedParts);
 
         List<SeedRange> remainder = new ArrayList<>();
 
