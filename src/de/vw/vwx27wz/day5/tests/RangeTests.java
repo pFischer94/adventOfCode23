@@ -20,7 +20,7 @@ public class RangeTests {
     @Test
     void testMergeOverlappingRangesIn() {
         List<SeedRange> unmerged = List.of(this.range1To5, this.range3To6);
-        List<SeedRange> mergedList = Range.mergeOverlappingRangesIn(unmerged);
+        List<SeedRange> mergedList = Range.mergeAdjacentRangesIn(unmerged);
         assertEquals(1, mergedList.size());
         assertEquals(new SeedRange(1, 6), mergedList.get(0));
     }

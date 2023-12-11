@@ -44,12 +44,13 @@ public class SeedRange extends Range {
                     convertedParts.add(convertedPart);
                 }
             }
+            convertedParts.sort((a, b) -> a.compareTo(b));
             List<SeedRange> remainder = sourceRange.deduct(convertedParts);
             destinationRanges.addAll(remainder);
         }
 
         destinationRanges.sort((a, b) -> a.compareTo(b));
-        destinationRanges = Range.mergeOverlappingRangesIn(destinationRanges);
+        destinationRanges = Range.mergeAdjacentRangesIn(destinationRanges);
         if (!Range.isListOfRangesValid(destinationRanges)) {
             throw new RuntimeException("destinationRanges is an invalid List of SeedRanges");
         }
@@ -60,8 +61,9 @@ public class SeedRange extends Range {
         if (convertedParts.size() == 0) {
             return List.of(this);
         }
-        convertedParts.sort((a, b) -> a.compareTo(b));
-        Range.isListOfRangesValid(convertedParts);
+        if (!Range.isListOfRangesValid(convertedParts)) {
+            throw new IllegalArgumentException("converted Parts are not valid");
+        }
 
         List<SeedRange> remainder = new ArrayList<>();
 

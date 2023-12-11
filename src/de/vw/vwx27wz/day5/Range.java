@@ -28,8 +28,11 @@ public abstract class Range {
         return !(this.isBefore(other) || other.isBefore(this));
     }
 
-    // TODO mergeAdjacent
-    public static List<SeedRange> mergeOverlappingRangesIn(List<SeedRange> sortedRanges) {
+    public boolean overlapsOrIsAdjacent(Range other) {
+        return this.overlaps(other) || this.start - other.end == 1 || other.start - this.end == 1;
+    }
+
+    public static List<SeedRange> mergeAdjacentRangesIn(List<SeedRange> sortedRanges) {
         List<SeedRange> mergedRanges = new ArrayList<>();
 
         for (int index = 0; index < sortedRanges.size(); index++) {
@@ -43,7 +46,7 @@ public abstract class Range {
                     throw new IllegalArgumentException("input has to be sorted beforehand");
                 }
 
-                if (lastMerged.overlaps(sortedRange)) {
+                if (lastMerged.overlapsOrIsAdjacent(sortedRange)) {
                     sortedRange.mergeLast(mergedRanges);
                 } else {
                     mergedRanges.add(sortedRange);
@@ -72,6 +75,9 @@ public abstract class Range {
             Range leftRange = ranges.get(index);
             Range rightRange = ranges.get(index + 1);
             if (!rightRange.isValid()) {
+                return false;
+            }
+            if (rightRange.isBefore(leftRange)) {
                 return false;
             }
             if (leftRange.overlaps(rightRange)) {
