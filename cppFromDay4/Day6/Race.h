@@ -1,6 +1,9 @@
 #ifndef RACE_H
 #define RACE_H
 
+#include <iostream>
+using namespace std;
+
 class Race {
 
     long time;
