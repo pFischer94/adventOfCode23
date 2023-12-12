@@ -57,6 +57,7 @@ public abstract class Range {
         return mergedRanges;
     }
 
+    // TODO Frage: warum geht private nicht?
     protected void mergeLast(List<SeedRange> mergedRanges) {
         if (mergedRanges.size() == 0) {
             mergedRanges.add((SeedRange) this);
