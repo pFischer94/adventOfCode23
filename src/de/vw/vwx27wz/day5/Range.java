@@ -57,7 +57,10 @@ public abstract class Range {
         return mergedRanges;
     }
 
-    // TODO Frage: warum geht private nicht?
+    // FRAGE: warum geht private nicht?
+    // ANTWORT: weil die Methode in mergeAdjacentRangesIn() von einem SeedRange Objekt benutzt wird,
+    // dass private Range Methoden nicht sehen kann -> protected
+    // GENERELL: Parents sollten niemals die Kinder kennen oder verwenden!!!
     protected void mergeLast(List<SeedRange> mergedRanges) {
         if (mergedRanges.size() == 0) {
             mergedRanges.add((SeedRange) this);
