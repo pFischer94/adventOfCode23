@@ -1,10 +1,16 @@
 #include <map>
+#include <sstream>
 #include "Hand.h"
 using namespace std;
 
 ostream& operator<<(ostream& os, const Hand& hand) {
-    os << "Hand [ cards: " << hand.cards << ", bid: " << setw(4) << hand.bid 
-        << ", rank: " << setw(4) << hand.rank << ", winning: " << setw(6) << hand.winning << " ]";
+    os << "Hand [ cards: " << hand.cards 
+        << ", handType: " << hand.handType 
+        << ", bid: " << setw(4) << hand.bid 
+        << ", rank: " << setw(4) << hand.rank 
+        << ", winning: " << setw(6) << hand.winning 
+        << " ]"
+        << endl;
     return os;
 }
 
@@ -31,18 +37,18 @@ int Hand::getRankOfCardAtIndex(int index) const {
         case 'A': return 1;
         case 'K': return 2;
         case 'Q': return 3;
-        case 'J': return 4;
-        case 'T': return 5;
+        case 'J': return 13;
+        case 'T': return 4;
     }
     if (card < 50 || card > 57) {
         throw runtime_error("invalid card");
     }
-    return 15 - (card - 48);
+    return 14 - (card - 48);
 }
 
 HandType Hand::getHandType() {
     HandType handType;
-    
+
     map<char, int> cardsWithAmounts;
     for (char card : cards) {
         if (cardsWithAmounts.contains(card)) {
@@ -52,18 +58,104 @@ HandType Hand::getHandType() {
         }
     }
 
-    int size = cardsWithAmounts.size();
-    if (size == 1) {
-        return HandType::FIVE_OF_A_KIND;
-    } else if (size == 2) {
-        return get4oakOrFH(cardsWithAmounts);
-    } else if (size == 3) {
-        return get3oakOr2P(cardsWithAmounts);
-    } else if (size == 4) {
-        return HandType::ONE_PAIR;
-    } else {
-        return HandType::HIGH_CARD;
+    int amountOfJacks = 0;
+    if (cardsWithAmounts.contains('J')) {
+        amountOfJacks = cardsWithAmounts['J'];
     }
+
+    int size = cardsWithAmounts.size();
+    stringstream errS;
+    errS << this << "   ";
+
+    if (size == 1) {
+        handType = HandType::FIVE_OF_A_KIND;
+
+    } else if (size == 2) {
+        handType = get4oakOrFH(cardsWithAmounts);
+
+        if (handType == HandType::FOUR_OF_A_KIND) {
+            if (amountOfJacks == 1) {
+                handType = HandType::FIVE_OF_A_KIND;
+            } else if (amountOfJacks == 4) {
+                handType = HandType::FIVE_OF_A_KIND;
+            } else if (amountOfJacks != 0) {
+                errS << "invalid 4oak Jacks: " << amountOfJacks;
+                throw runtime_error(errS.str());
+            }
+
+        } else if (handType == HandType::FULL_HOUSE) {
+            if (amountOfJacks == 1) {
+                handType = HandType::FOUR_OF_A_KIND;
+            } else if (amountOfJacks == 2) {
+                handType = HandType::FIVE_OF_A_KIND;
+            } else if (amountOfJacks == 3) {
+                handType = HandType::FIVE_OF_A_KIND;    //5JJ5J
+            } else if (amountOfJacks != 0) {
+                errS << "invalid Fh Jacks: " << amountOfJacks;
+                throw runtime_error(errS.str());
+            }
+
+        } else {
+            errS << "invalid handType for size = 2: " << handType;
+            throw runtime_error(errS.str());
+        }
+
+    } else if (size == 3) {
+        handType = get3oakOr2P(cardsWithAmounts);
+
+        if (handType == HandType::THREE_OF_A_KIND) {
+            if (amountOfJacks == 1) {
+                handType = HandType::FOUR_OF_A_KIND;
+            } else if (amountOfJacks == 2) {
+                handType = HandType::FIVE_OF_A_KIND;
+            } else if (amountOfJacks == 3) {
+                handType = HandType::FOUR_OF_A_KIND;
+            } else if (amountOfJacks != 0) {
+                errS << "invalid 3oak Jacks: " << amountOfJacks;
+                throw runtime_error(errS.str());
+            }
+
+        } else if (handType == HandType::TWO_PAIR) {
+            if (amountOfJacks == 1) {
+                handType = HandType::FULL_HOUSE;
+            } else if (amountOfJacks == 2) {
+                handType = HandType::FOUR_OF_A_KIND;
+            } else if (amountOfJacks != 0) {
+                errS << "invalid 2p Jacks: " << amountOfJacks;
+                throw runtime_error(errS.str());
+            }
+
+        } else {
+            errS << "invalid handType for size = 3: " << handType;
+            throw runtime_error(errS.str());
+        }
+
+    } else if (size == 4) {
+        handType = HandType::ONE_PAIR;
+        if (amountOfJacks == 1) {
+            handType = HandType::THREE_OF_A_KIND;
+        } else if (amountOfJacks == 2) {
+            handType = HandType::THREE_OF_A_KIND;
+        } else if (amountOfJacks != 0) {
+            errS << "invalid 1p Jacks: " << amountOfJacks;
+            throw runtime_error(errS.str());
+        }
+
+    } else if (size == 5) {
+        handType = HandType::HIGH_CARD;
+        if (amountOfJacks == 1) {
+            handType = HandType::ONE_PAIR;
+        } else if (amountOfJacks != 0) {
+            errS << "invalid Hc Jacks: " << amountOfJacks;
+            throw runtime_error(errS.str());
+        }
+
+    } else {
+        errS << "cardsWithAmounts.size() is invalid";
+        throw runtime_error(errS.str());
+    }
+
+    return handType;
 }
 
 HandType Hand::get4oakOrFH(const map<char, int> &cardsWithAmounts) {
