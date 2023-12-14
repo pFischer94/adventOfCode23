@@ -1,10 +1,7 @@
 #include "Pipe.h"
 
 Pipe::Pipe(int row, int col, char form, char directionFrom, Pipe *to, long distance) 
-        : row(row), col(col), form(form), directionFrom(directionFrom), next(to), distance(distance)
-{
-
-}
+        : row(row), col(col), form(form), directionFrom(directionFrom), next(to), distance(distance) {}
 
 Pipe::~Pipe()
 {
@@ -87,8 +84,8 @@ char Pipe::findDirectionOfNext() const
         case 'E':
             switch (this->form) {
                 case '-': return 'W';
-                case 'J': return 'N';
-                case '7': return 'S';
+                case 'L': return 'N';
+                case 'F': return 'S';
             }
         case 'S':
             switch (this->form) {
@@ -103,7 +100,7 @@ char Pipe::findDirectionOfNext() const
                 case '7': return 'S';
             }
     }
-    return 0;
+    throw runtime_error("directionNext could not be found");
 }
 
 int Pipe::findSColInRow(const string &line)
@@ -138,13 +135,15 @@ vector<pair<int, int>> Pipe::getAdjacents(const vector<string> &lines)
 
 bool operator==(const Pipe &pipe1, const Pipe &pipe2)
 {
-    if (pipe1.row == pipe2.row && pipe1.col == pipe2.col && pipe1.form == pipe2.form && 
-            pipe1.directionFrom == pipe2.directionFrom && pipe1.distance == pipe2.distance) {
-        if (pipe1.next != nullptr && pipe2.next != nullptr) {
-            if (*pipe1.next == *pipe2.next) {
-                return true;
-            }
-        } else if (pipe1.next == pipe2.next) {
+    if (!(pipe1.row == pipe2.row && pipe1.col == pipe2.col && pipe1.form == pipe2.form && 
+            pipe1.directionFrom == pipe2.directionFrom && pipe1.distance == pipe2.distance)) {
+        return false;
+    }
+    if (pipe1.next == pipe2.next) {
+        return true;
+    }
+    if (pipe1.next != nullptr && pipe2.next != nullptr) {
+        if (*pipe1.next == *pipe2.next) {
             return true;
         }
     }

@@ -10,6 +10,15 @@ int main() {
     Pipe* s = Pipe::findS(lines);
     Pipe* curr = s->findNextFromS(lines);
 
+    while (curr->getDistance() < 100000 && curr->getForm() != 'S') {
+        curr->setNext(curr->findNext(lines));
+        curr = curr->getNext();
+    }
+    
+    long loopDistance = curr->getDistance();
+    long farthestDistance = loopDistance / 2;
+    cout << "farthestDistance: " << farthestDistance << endl;
+
     delete s;
     mF.printEnd();
     return 0;

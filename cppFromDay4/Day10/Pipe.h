@@ -28,9 +28,13 @@ class Pipe {
 public:
     Pipe(int row, int col, char form, char directionFrom, Pipe* to, long distance);
     ~Pipe();
-    static Pipe* findS(const vector<string>& lines);                    // 
+    static Pipe* findS(const vector<string>& lines);                    // tested iO
     Pipe* findNextFromS(const vector<string>& lines) const;             // tested iO
     Pipe* findNext(const vector<string>& lines) const;                  // tested iO
+    char getForm() const { return this->form; }
+    Pipe* getNext() const { return this->next; }
+    void setNext(Pipe* next) { this->next = next; }
+    long getDistance() const { return this->distance; }
 
 };
 

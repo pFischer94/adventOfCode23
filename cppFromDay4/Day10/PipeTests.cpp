@@ -1,5 +1,6 @@
 #include <iostream>
 #include "PipeTests.h"
+#include "../TxtReader.h"
 using namespace std;
 
 int main() {
@@ -12,6 +13,7 @@ int main() {
     PipeTests::testFindS();
     // deprecated
     PipeTests::testGetAdjacents();
+    PipeTests::testFindNextUntilS();
     
     cout << endl;
     return 0;
@@ -93,6 +95,17 @@ void PipeTests::testFindNext()
     } else {
         cout << RED << "niO" << RESET << endl;
     }
+}
+
+void PipeTests::testFindNextUntilS()
+{
+    // vector<string> lines = TxtReader("../../inputs/input10.txt").getLines();
+    // Pipe* curr = new Pipe(26, 80, '7', 'S', nullptr, 20);
+    // cout << *curr << endl;
+    // for (int i = 0; i < 8; i++) {
+    //     curr = curr->findNext(lines);
+    //     cout << *curr << endl;
+    // }
 }
 
 void PipeTests::testFindNextFromS()

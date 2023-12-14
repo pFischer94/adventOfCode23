@@ -14,6 +14,7 @@ class PipeTests {
     void static testFindSColInRow();
     void static testFindDirectionOfNext();
     void static testFindNext();
+    void static testFindNextUntilS();
     void static testFindNextFromS();
     void static testFindS();
     // deprecated
