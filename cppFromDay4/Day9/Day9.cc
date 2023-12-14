@@ -3,7 +3,7 @@
 #include "LongVectors.cc"
 
 int main() {
-    MethodFrame mF("Day8.cc -> main");
+    MethodFrame mF("Day9.cc -> main");
     mF.printStart();
     vector<string> lines = TxtReader("../../inputs/input9.txt").getLines();
 
