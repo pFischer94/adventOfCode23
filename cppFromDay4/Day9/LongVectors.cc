@@ -6,6 +6,7 @@ vector<vector<long>> getPyramidOfDifferences(const vector<long>& nums);     // t
 vector<long> getDifferences(const vector<long>& nums);                      // tested iO
 bool isAll0s(const vector<long>& nums);                                     // tested iO
 long getNewRightValueOfPyramid(const vector<vector<long>>& pyramid);        // tested iO
+long getNewLeftValueOfPyramid(const vector<vector<long>>& pyramid);         // 
 long sumVector(const vector<long>& nums);                                   // tested iO
 void printPyramid(const vector<vector<long>>& pyramid);                     // not tested
 
@@ -66,6 +67,20 @@ long getNewRightValueOfPyramid(const vector<vector<long>> &pyramid)
         for (int i = pyramid.size() - 1; i >= 0; i--) {
             long lastValue = pyramid[i].back();
             newValue += lastValue;
+        }
+    return newValue;
+}
+
+long getNewLeftValueOfPyramid(const vector<vector<long>> &pyramid)
+{
+    long newValue = 0;
+        for (int i = 0; i < pyramid.size(); i++) {
+            long firstValue = pyramid[i].front();
+            if (i % 2 == 0) {
+                newValue += firstValue;
+            } else {
+                newValue -= firstValue;
+            }
         }
     return newValue;
 }

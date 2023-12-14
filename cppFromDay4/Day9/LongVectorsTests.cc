@@ -10,6 +10,7 @@ int main() {
     tester.testGetDifferences();
     tester.testIsAll0s();
     tester.testGetNewRightValueOfPyramid();
+    tester.testGetNewLeftValueOfPyramid();
     tester.testSumVectors();
     
     cout << endl;
@@ -94,5 +95,21 @@ void LongVectorsTests::testGetNewRightValueOfPyramid()
         cout << GREEN << setw(WIDTH) << "  testGetNewRightValueOfPyramid" << " iO" << RESET << endl;
     } else {
         cout << RED << setw(WIDTH) << "  testGetNewRightValueOfPyramid" << "niO" << RESET << endl;
+    }
+}
+
+void LongVectorsTests::testGetNewLeftValueOfPyramid()
+{
+    vector<vector<long>> pyramid1 = { {1,2,3,4,5,6}, {1,1,1,1,1}, {0,0,0,0} };
+    vector<vector<long>> pyramid2 = { {1,1,1,1,1}, {0,0,0,0} };
+    long newValue1 = getNewLeftValueOfPyramid(pyramid1);
+    long expected1 = 0;
+    long newValue2 = getNewLeftValueOfPyramid(pyramid2);
+    long expected2 = 1;
+
+    if (newValue1 == expected1 && newValue2 == expected2) {
+        cout << GREEN << setw(WIDTH) << "  testGetNewLeftValueOfPyramid" << " iO" << RESET << endl;
+    } else {
+        cout << RED << setw(WIDTH) << "  testGetNewLeftValueOfPyramid" << "niO" << RESET << endl;
     }
 }

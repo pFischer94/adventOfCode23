@@ -18,6 +18,7 @@ class LongVectorsTests {
     void testGetDifferences();
     void testIsAll0s();
     void testGetNewRightValueOfPyramid();
+    void testGetNewLeftValueOfPyramid();
     void testSumVectors();
     
     friend int main();
