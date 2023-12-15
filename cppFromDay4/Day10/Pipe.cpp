@@ -72,6 +72,60 @@ Pipe *Pipe::findNext(const vector<string> &lines) const
     return new Pipe(row, col, lines[row][col], directionFrom, nullptr, this->distance + 1);
 }
 
+vector<string> Pipe::getLinesWithLoop(const vector<string> &lines)
+{
+    vector<string> linesWithLoop;
+    for (string line : lines) {
+        if (find(line.begin(), line.end(), 'X') != line.end()) {
+            linesWithLoop.emplace_back(line);
+        }
+    }
+    return linesWithLoop;
+}
+
+long Pipe::countEnclosedTiles(const vector<string> &lines)
+{
+    if (this->form != 'S' || this->directionFrom != 'S' || this->distance != 0) {
+        throw runtime_error("countEnclosedTiles did not start from S");
+    }
+
+    long enclosedTiles = 0;
+    bool enclosed = false;
+    char lastRelevantChar = ' ';
+
+    for (string line: lines) {
+        for (char c : line) {
+            if (enclosed && c == ' ') {
+                enclosedTiles++;
+            }
+
+            if (c == 'S') {
+                c = this->getFormOfS();
+            }
+
+            switch (c) {
+                case 'F': lastRelevantChar = c; break;
+                case 'L': lastRelevantChar = c; break;
+                case '|': enclosed = !enclosed; break;
+                case '7': {
+                    if (lastRelevantChar == 'L') {
+                        enclosed = !enclosed;
+                    }
+                    break;
+                }
+                case 'J': {
+                    if (lastRelevantChar == 'F') {
+                        enclosed = !enclosed;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    return enclosedTiles;
+}
+
 char Pipe::findDirectionOfNext() const
 {
     switch (this->directionFrom) {
@@ -131,6 +185,55 @@ vector<pair<int, int>> Pipe::getAdjacents(const vector<string> &lines)
     }
 
     return adjacents;
+}
+
+char Pipe::getFormOfS() const
+{
+    if (this->form != 'S' || this->directionFrom != 'S' || this->distance != 0) {
+        throw runtime_error("countEnclosedTiles did not start from S");
+    }
+    
+    int verticalDiff = this->next->row - this->row;
+    int horizontalDiff = this->next->col - this->col;
+    if (verticalDiff == horizontalDiff) {
+        throw runtime_error("verticalDiff = horizontalDiff");
+    }
+    char directionOfNext;
+    if (verticalDiff == 0) {
+        if (horizontalDiff == 1) {
+            directionOfNext = 'E';
+            switch (this->directionFrom) {
+                case 'N': return 'L';
+                case 'S': return 'F';
+                case 'W': return '-';
+            }
+        } else {
+            directionOfNext = 'W';
+            switch (this->directionFrom) {
+                case 'N': return 'J';
+                case 'E': return '-';
+                case 'S': return '7';
+            }
+        }
+    } else {
+        if (verticalDiff == 1) {
+            directionOfNext = 'S';
+            switch (this->directionFrom) {
+                case 'N': return '|';
+                case 'E': return 'F';
+                case 'W': return '7';
+            }
+        } else {
+            directionOfNext = 'N';
+            switch (this->directionFrom) {
+                case 'E': return 'L';
+                case 'S': return '|';
+                case 'W': return 'J';
+            }
+        }
+    }
+    
+    throw runtime_error("form of S could not be found");
 }
 
 bool operator==(const Pipe &pipe1, const Pipe &pipe2)
